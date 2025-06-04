@@ -6,9 +6,8 @@ import re
 
 model = OllamaLLM(model="llama3.2")
 spacing = '-' * 30
-custom_filename = input('Enter a name: (press Enter to use default name) ').strip()
+custom_filename = input('Choose a filename: (press Enter to use default name) ').strip()
 filename = custom_filename if custom_filename else 'llm_reponses.txt'
-
 
 def get_next_index(filename):
     if not os.path.exists(filename):
@@ -19,7 +18,6 @@ def get_next_index(filename):
     matches = re.findall(r'^\d+\)', content, re.MULTILINE)
     return len(matches) + 1
 
-
 def saving_response(question: str, response: str, filename: str = filename):
      timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
      index = get_next_index(filename)
@@ -29,7 +27,6 @@ def saving_response(question: str, response: str, filename: str = filename):
          f.write(formatted_text)
          print('Data successfully recorded!')
     
-
 while True:
     print(spacing)
     question = input("Enter your question: (Press q to quit) ")
@@ -43,15 +40,18 @@ while True:
             os.remove(filename)
             print('File deleted.')
         continue
-        
+
     try:
+        print("Getting responses...")
         response = model.invoke(question)
         print(textwrap.fill(response, width=120) + '\n')
 
         print('Saving responses...')
         saving_response(question=question, response=response)
+        print(f'Responses saved to {filename}.')
 
     except Exception as e:
         print(f'An error has occurred: {e}')
 
+        
 
